@@ -222,6 +222,8 @@ func (t Result) ForEach(iterator func(key, value Result) bool) {
 			break
 		} else if json[i] == '[' {
 			i++
+			key.Type = Number
+			key.Num = -1
 			break
 		}
 		if json[i] > ' ' {
@@ -261,6 +263,7 @@ func (t Result) ForEach(iterator func(key, value Result) bool) {
 			return
 		}
 		value.Index = s
+		key.Num = key.Num + 1
 		if !iterator(key, value) {
 			return
 		}

@@ -345,6 +345,16 @@ func TestForEach(t *testing.T) {
 	ParseBytes([]byte(`{"bad`)).ForEach(nil)
 	ParseBytes([]byte(`{"ok":"bad`)).ForEach(nil)
 }
+
+func TestForEachOnArray(t *testing.T) {
+	Result{}.ForEach(nil)
+	var index int64
+	ParseBytes([]byte(basicJSON)).Get("loggy.programmers").ForEach(func(key, value Result) bool {
+		assert(t, key.Int() == index)
+		index++
+		return true
+	})
+}
 func TestMap(t *testing.T) {
 	assert(t, len(ParseBytes([]byte(`"asdf"`)).Map()) == 0)
 	assert(t, ParseBytes([]byte(`{"asdf":"ghjk"`)).Map()["asdf"].String() == "ghjk")
@@ -356,8 +366,8 @@ func TestBasic1(t *testing.T) {
 	mtok := get(basicJSON, `loggy.programmers`)
 	var count int
 	mtok.ForEach(func(key, value Result) bool {
-		if key.Exists() {
-			t.Fatalf("expected %v, got %v", false, key.Exists())
+		if !key.Exists() {
+			t.Fatalf("expected %v, got %v", true, key.Exists())
 		}
 		count++
 		if count == 3 {
